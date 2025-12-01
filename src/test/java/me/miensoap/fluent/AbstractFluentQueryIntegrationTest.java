@@ -9,12 +9,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+
+@SpringBootTest(properties = {
+    "spring.jpa.properties.hibernate.session_factory.statement_inspector=me.miensoap.fluent.support.CapturingStatementInspector"
+})
 @Transactional
 abstract class AbstractFluentQueryIntegrationTest {
 
     @Autowired
     protected MemberRepository memberRepository;
+
+    @PersistenceContext
+    protected EntityManager entityManager;
 
     protected Team devTeam;
     protected Team opsTeam;
@@ -29,6 +37,7 @@ abstract class AbstractFluentQueryIntegrationTest {
         opsTeam = new Team("Operations", "OPS");
         partnerTeam = new Team("Partners", "PRT");
         memberRepository.saveAll(seedMembers());
+        clearExecutedSql();
     }
 
     protected FluentQuery<Member> query() {
@@ -40,6 +49,14 @@ abstract class AbstractFluentQueryIntegrationTest {
             .map(Member::getId)
             .sorted()
             .collect(Collectors.toList());
+    }
+
+    protected void clearExecutedSql() {
+        me.miensoap.fluent.support.CapturingStatementInspector.clear();
+    }
+
+    protected List<String> executedSql() {
+        return me.miensoap.fluent.support.CapturingStatementInspector.statements();
     }
 
     private List<Member> seedMembers() {

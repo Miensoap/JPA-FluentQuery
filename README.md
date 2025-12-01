@@ -9,6 +9,7 @@
 - **Specification 혼합 지원**: 기존 `Specification<T>` 객체를 `where(specification)`, `and(specification)`, `or(specification)` 으로 주입하여 Fluent DSL 과 레거시 코드를 자연스럽게 섞을 수 있습니다.
 - **정렬 DSL**: `orderBy(Member::getAge).descending().orderBy(Member::getId).ascending()` 과 같이 정렬 조건을 체인에 녹여 `fetch()` 호출 시 자동으로 `Sort` 를 구성합니다.
 - **전역 옵션**: `distinct()` 로 중복 제거, `not()` 으로 전체 조건 부정 등 Specification 수준의 옵션을 간편하게 설정할 수 있습니다.
+- **Fetch Join DSL**: `fetchJoin(Member::getTeam)` 혹은 `fetchJoin("team", JoinType.LEFT)` 로 N+1 문제가 발생하는 지연 로딩 연관을 즉시 로딩할 수 있습니다.
 - **친절한 에러 메시지**: 필드 타입과 연산 이름을 포함한 검증 에러로 오용을 빠르게 발견할 수 있습니다.
 
 ## Gradle 설정
@@ -64,6 +65,21 @@ boolean exists = memberRepository.query()
     .distinct()
     .exists();
 ```
+
+### Fetch Join 으로 N+1 제어
+
+지연 로딩 연관을 즉시 로딩하고 싶다면 `fetchJoin()` 메서드를 사용하세요. 문자열 경로와 메서드 참조를 모두 지원하며, 중첩 경로(`"team.company"`)도 점 표기법으로 표현할 수 있습니다.
+
+```java
+List<Member> eagerLoaded = memberRepository.query()
+    .where(Member::getStatus).equalTo("ACTIVE")
+    .fetchJoin(Member::getTeam)
+    .fetchJoin("tags", JoinType.LEFT)
+    .distinct()
+    .fetch();
+```
+
+카운트/exists 쿼리에서는 fetch join 이 자동으로 무시되므로 동일한 빌더를 재사용해도 안전합니다. 단, 컬렉션 fetch join 과 페이징을 동시에 사용하면 JPA 특성상 메모리 페이징이 발생하므로 주의하세요.
 
 ## 테스트 구조
 
