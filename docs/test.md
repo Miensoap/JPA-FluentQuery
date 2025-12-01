@@ -89,6 +89,20 @@ fetch(Pageable) (Page 여러 페이지 연속 조회)
 
 전체 카운트, 페이지별 요소 수, 중복/누락 없이 전체 커버되는지 확인.
 
+페치 조인 전용
+
+클래스 예: FluentQueryFetchJoinTest
+
+다루는 것:
+
+fetchJoin(Member::getTeam), fetchJoin("tags") + distinct()
+
+Hibernate StatementInspector 를 이용해 실제 SQL 이 `JOIN` 을 포함하는지, 추가 SELECT 없이 지연 로딩이 해결되는지 추적
+
+목적:
+
+N+1 방지 기능이 선언적인 DSL 호출로 실제로 `join fetch` 쿼리를 생성하는지 보장하고, count/exists 에는 영향을 주지 않는지 확인.
+
 논리 조합(AND/OR)/조합 스펙 전용
 
 클래스 예: FluentQueryLogicalCombinationTest
