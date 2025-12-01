@@ -1,5 +1,6 @@
 package me.miensoap.fluent;
 
+import me.miensoap.fluent.core.FluentQuery;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.NoRepositoryBean;

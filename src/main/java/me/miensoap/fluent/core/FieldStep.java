@@ -1,4 +1,4 @@
-package me.miensoap.fluent;
+package me.miensoap.fluent.core;
 
 import java.util.Collection;
 import java.util.Objects;

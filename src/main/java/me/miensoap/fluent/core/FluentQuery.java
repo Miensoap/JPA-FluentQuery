@@ -1,13 +1,13 @@
-package me.miensoap.fluent;
+package me.miensoap.fluent.core;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -21,24 +21,13 @@ import jakarta.persistence.criteria.JoinType;
 public class FluentQuery<T> {
 
     private final JpaSpecificationExecutor<T> executor;
+    private final List<FetchJoinDescriptor> fetchJoins = new ArrayList<>();
+    private final List<Sort.Order> orderings = new ArrayList<>();
     private Specification<T> spec = Specification.where(null);
     private boolean distinct;
-    private final List<Sort.Order> orderings = new ArrayList<>();
-    private final List<FetchJoinDescriptor> fetchJoins = new ArrayList<>();
 
     public FluentQuery(JpaSpecificationExecutor<T> executor) {
         this.executor = executor;
-    }
-
-    protected void addCondition(Specification<T> newSpec, boolean isOr) {
-        if (newSpec == null) {
-            return;
-        }
-        if (spec == null) {
-            spec = Specification.where(newSpec);
-            return;
-        }
-        spec = isOr ? spec.or(newSpec) : spec.and(newSpec);
     }
 
     public FieldStep<T> where(String field) {
@@ -64,6 +53,11 @@ public class FluentQuery<T> {
         return new FieldStep<>(this, field, false, PropertyNameResolver.resolveType(property));
     }
 
+    public FluentQuery<T> and(Specification<T> specification) {
+        addCondition(specification, false);
+        return this;
+    }
+
     public FieldStep<T> or(String field) {
         return new FieldStep<>(this, field, true);
     }
@@ -73,12 +67,21 @@ public class FluentQuery<T> {
         return new FieldStep<>(this, field, true, PropertyNameResolver.resolveType(property));
     }
 
-    public OrderStep<T> orderBy(String field) {
-        return new OrderStep<>(this, field);
+    public FluentQuery<T> or(Specification<T> specification) {
+        addCondition(specification, true);
+        return this;
     }
 
-    public <R> OrderStep<T> orderBy(Property<T, R> property) {
-        return new OrderStep<>(this, PropertyNameResolver.resolve(property));
+    public FluentQuery<T> not() {
+        if (spec != null) {
+            spec = Specification.not(spec);
+        }
+        return this;
+    }
+
+    public FluentQuery<T> distinct() {
+        this.distinct = true;
+        return this;
     }
 
     public FluentQuery<T> fetchJoin(String path) {
@@ -98,26 +101,12 @@ public class FluentQuery<T> {
         return registerFetchJoin(path, joinType);
     }
 
-    public FluentQuery<T> and(Specification<T> specification) {
-        addCondition(specification, false);
-        return this;
+    public OrderStep<T> orderBy(String field) {
+        return new OrderStep<>(this, field);
     }
 
-    public FluentQuery<T> or(Specification<T> specification) {
-        addCondition(specification, true);
-        return this;
-    }
-
-    public FluentQuery<T> not() {
-        if (spec != null) {
-            spec = Specification.not(spec);
-        }
-        return this;
-    }
-
-    public FluentQuery<T> distinct() {
-        this.distinct = true;
-        return this;
+    public <R> OrderStep<T> orderBy(Property<T, R> property) {
+        return new OrderStep<>(this, PropertyNameResolver.resolve(property));
     }
 
     public List<T> fetch() {
@@ -156,6 +145,17 @@ public class FluentQuery<T> {
         return executor.exists(currentSpec());
     }
 
+    protected void addCondition(Specification<T> newSpec, boolean isOr) {
+        if (newSpec == null) {
+            return;
+        }
+        if (spec == null) {
+            spec = Specification.where(newSpec);
+            return;
+        }
+        spec = isOr ? spec.or(newSpec) : spec.and(newSpec);
+    }
+
     private Specification<T> currentSpec() {
         Specification<T> base = spec;
         if (!distinct && fetchJoins.isEmpty()) {
@@ -172,11 +172,6 @@ public class FluentQuery<T> {
         };
     }
 
-    private boolean isCountQuery(CriteriaQuery<?> query) {
-        Class<?> resultType = query.getResultType();
-        return resultType == Long.class || resultType == long.class;
-    }
-
     void addOrder(Sort.Order order) {
         this.orderings.add(order);
     }
@@ -191,5 +186,10 @@ public class FluentQuery<T> {
         fetchJoins.removeIf(existing -> existing.hasSamePath(descriptor.path()));
         fetchJoins.add(descriptor);
         return this;
+    }
+
+    private boolean isCountQuery(CriteriaQuery<?> query) {
+        Class<?> resultType = query.getResultType();
+        return resultType == Long.class || resultType == long.class;
     }
 }

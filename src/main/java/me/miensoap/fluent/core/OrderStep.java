@@ -1,8 +1,8 @@
-package me.miensoap.fluent;
+package me.miensoap.fluent.core;
 
 import org.springframework.data.domain.Sort;
 
-final class OrderStep<T> {
+public final class OrderStep<T> {
 
     private final FluentQuery<T> query;
     private final String field;
