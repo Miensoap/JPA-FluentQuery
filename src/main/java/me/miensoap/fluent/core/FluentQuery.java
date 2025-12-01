@@ -23,7 +23,7 @@ public class FluentQuery<T> {
     private final JpaSpecificationExecutor<T> executor;
     private final List<FetchJoinDescriptor> fetchJoins = new ArrayList<>();
     private final List<Sort.Order> orderings = new ArrayList<>();
-    private Specification<T> spec = Specification.where(null);
+    private Specification<T> spec;
     private boolean distinct;
 
     public FluentQuery(JpaSpecificationExecutor<T> executor) {
@@ -40,7 +40,7 @@ public class FluentQuery<T> {
     }
 
     public FluentQuery<T> where(Specification<T> specification) {
-        this.spec = Specification.where(specification);
+        this.spec = specification == null ? null : Specification.where(specification);
         return this;
     }
 
