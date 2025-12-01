@@ -9,6 +9,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
+import me.miensoap.fluent.entity.Member;
+
 class FluentQueryAggregateAndSingleResultTest extends AbstractFluentQueryIntegrationTest {
 
     @Test

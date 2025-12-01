@@ -1,4 +1,4 @@
-package me.miensoap.fluent;
+package me.miensoap.fluent.entity;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -49,18 +49,18 @@ public class Member {
     @Embedded
     private Address address;
 
-    Member(String status, Integer age, String grade, String role, LocalDateTime lastLoginAt) {
+    public Member(String status, Integer age, String grade, String role, LocalDateTime lastLoginAt) {
         this(status, age, grade, role, lastLoginAt, null, List.of(), null, null, null, null);
     }
 
-    Member(String status, Integer age, String grade, String role, LocalDateTime lastLoginAt,
-           String email, List<String> tags) {
+    public Member(String status, Integer age, String grade, String role, LocalDateTime lastLoginAt,
+                  String email, List<String> tags) {
         this(status, age, grade, role, lastLoginAt, email, tags, null, null, null, null);
     }
 
-    Member(String status, Integer age, String grade, String role, LocalDateTime lastLoginAt,
-           String email, List<String> tags, Boolean active, MembershipType membershipType,
-           Team team, Address address) {
+    public Member(String status, Integer age, String grade, String role, LocalDateTime lastLoginAt,
+                  String email, List<String> tags, Boolean active, MembershipType membershipType,
+                  Team team, Address address) {
         this.status = status;
         this.age = age;
         this.grade = grade;

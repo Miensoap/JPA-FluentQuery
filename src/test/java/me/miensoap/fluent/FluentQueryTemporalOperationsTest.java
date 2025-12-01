@@ -8,6 +8,8 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import me.miensoap.fluent.entity.Member;
+
 class FluentQueryTemporalOperationsTest extends
     AbstractFluentQueryIntegrationTest {
 

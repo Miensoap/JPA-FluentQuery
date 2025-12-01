@@ -9,6 +9,8 @@ import org.hibernate.Hibernate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import me.miensoap.fluent.entity.Member;
+
 class FluentQueryFetchJoinTest extends AbstractFluentQueryIntegrationTest {
 
     @Test

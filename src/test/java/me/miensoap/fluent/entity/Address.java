@@ -1,4 +1,4 @@
-package me.miensoap.fluent;
+package me.miensoap.fluent.entity;
 
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-class Address {
+public class Address {
 
     private String city;
     private String country;

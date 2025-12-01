@@ -1,4 +1,4 @@
-package me.miensoap.fluent;
+package me.miensoap.fluent.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-class Team {
+public class Team {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,7 +20,7 @@ class Team {
     private String name;
     private String departmentCode;
 
-    Team(String name, String departmentCode) {
+    public Team(String name, String departmentCode) {
         this.name = name;
         this.departmentCode = departmentCode;
     }

@@ -5,6 +5,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import me.miensoap.fluent.core.FluentQuery;
+import me.miensoap.fluent.entity.Address;
+import me.miensoap.fluent.entity.Member;
+import me.miensoap.fluent.entity.MembershipType;
+import me.miensoap.fluent.entity.Team;
+import me.miensoap.fluent.repository.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

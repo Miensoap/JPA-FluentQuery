@@ -12,6 +12,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 
+import me.miensoap.fluent.entity.Member;
+
 class FluentQueryPagingAndSortingTest extends
     AbstractFluentQueryIntegrationTest {
 

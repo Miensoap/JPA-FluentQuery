@@ -8,6 +8,8 @@ import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import me.miensoap.fluent.entity.Member;
+
 /**
  * Ensures that derived Spring Data queries keep parity with the fluent DSL.
  */

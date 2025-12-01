@@ -9,6 +9,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.jpa.domain.Specification;
 
+import me.miensoap.fluent.entity.Member;
+import me.miensoap.fluent.entity.MembershipType;
+
 class FluentQueryLogicalCombinationTest extends
     AbstractFluentQueryIntegrationTest {
 

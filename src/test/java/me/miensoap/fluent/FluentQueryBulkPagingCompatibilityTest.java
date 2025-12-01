@@ -15,6 +15,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 
+import me.miensoap.fluent.entity.Address;
+import me.miensoap.fluent.entity.Member;
+import me.miensoap.fluent.entity.MembershipType;
+
 /**
  * Verifies that fetch(Pageable) integrates seamlessly with Spring Data Page APIs.
  */
