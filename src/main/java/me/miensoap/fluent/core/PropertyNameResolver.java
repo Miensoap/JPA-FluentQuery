@@ -2,32 +2,43 @@ package me.miensoap.fluent.core;
 
 import java.beans.Introspector;
 import java.io.Serializable;
+import java.lang.invoke.MethodType;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 final class PropertyNameResolver {
+
+    private static final ConcurrentMap<LambdaCacheKey, ResolvedProperty> CACHE = new ConcurrentHashMap<>();
 
     private PropertyNameResolver() {
     }
 
     static String resolve(Property<?, ?> property) {
-        SerializedLambda lambda = serializedLambda(property);
-        String implMethod = lambda.getImplMethodName();
-        if (implMethod.startsWith("get") && implMethod.length() > 3) {
-            return decapitalize(implMethod.substring(3));
-        }
-        if (implMethod.startsWith("is") && implMethod.length() > 2) {
-            return decapitalize(implMethod.substring(2));
-        }
-        throw new IllegalArgumentException("Property references must point to a JavaBean getter: " + implMethod);
+        return resolveInternal(property).path();
     }
 
     static Class<?> resolveType(Property<?, ?> property) {
-        SerializedLambda lambda = serializedLambda(property);
-        String signature = lambda.getImplMethodSignature();
-        String returnDescriptor = signature.substring(signature.indexOf(')') + 1);
-        return toClass(returnDescriptor);
+        return resolveInternal(property).type();
+    }
+
+    static boolean isGetter(String methodName) {
+        return methodName != null
+            && (methodName.startsWith("get") && methodName.length() > 3
+            || methodName.startsWith("is") && methodName.length() > 2);
+    }
+
+    static String propertyName(String getterName) {
+        if (getterName.startsWith("get")) {
+            return decapitalize(getterName.substring(3));
+        }
+        if (getterName.startsWith("is")) {
+            return decapitalize(getterName.substring(2));
+        }
+        throw new IllegalArgumentException("Property references must point to a JavaBean getter: " + getterName);
     }
 
     private static SerializedLambda serializedLambda(Serializable lambda) {
@@ -40,40 +51,90 @@ final class PropertyNameResolver {
         }
     }
 
+    private static ResolvedProperty resolveInternal(Property<?, ?> property) {
+        SerializedLambda lambda = serializedLambda(property);
+        LambdaCacheKey key = LambdaCacheKey.from(lambda);
+        return CACHE.computeIfAbsent(key, k -> resolveWithoutCache(property, lambda));
+    }
+
+    private static ResolvedProperty resolveWithoutCache(Property<?, ?> property, SerializedLambda lambda) {
+        String methodName = lambda.getImplMethodName();
+        if (isGetter(methodName)) {
+            return new ResolvedProperty(propertyName(methodName), returnType(lambda));
+        }
+        Class<?> rootType = parameterType(lambda);
+        return PropertyPathRecorder.capture(property, rootType, lambda);
+    }
+
+    private static Class<?> returnType(SerializedLambda lambda) {
+        try {
+            MethodType methodType = MethodType.fromMethodDescriptorString(
+                lambda.getImplMethodSignature(),
+                PropertyNameResolver.class.getClassLoader()
+            );
+            return methodType.returnType();
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Unable to resolve property type", e);
+        }
+    }
+
+    private static Class<?> parameterType(SerializedLambda lambda) {
+        try {
+            MethodType methodType = MethodType.fromMethodDescriptorString(
+                lambda.getImplMethodSignature(),
+                PropertyNameResolver.class.getClassLoader()
+            );
+            if (methodType.parameterCount() == 0) {
+                throw new IllegalArgumentException("Property reference lambda must declare a target parameter");
+            }
+            return methodType.parameterType(0);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Unable to resolve property root type", e);
+        }
+    }
+
     private static String decapitalize(String name) {
         return Introspector.decapitalize(name);
     }
 
-    private static Class<?> toClass(String descriptor) {
-        switch (descriptor) {
-            case "I":
-                return Integer.TYPE;
-            case "J":
-                return Long.TYPE;
-            case "S":
-                return Short.TYPE;
-            case "B":
-                return Byte.TYPE;
-            case "F":
-                return Float.TYPE;
-            case "D":
-                return Double.TYPE;
-            case "Z":
-                return Boolean.TYPE;
-            case "C":
-                return Character.TYPE;
-            case "V":
-                return Void.TYPE;
-            default:
-                if (descriptor.startsWith("L") && descriptor.endsWith(";")) {
-                    String className = descriptor.substring(1, descriptor.length() - 1).replace('/', '.');
-                    try {
-                        return Class.forName(className);
-                    } catch (ClassNotFoundException e) {
-                        throw new IllegalArgumentException("Unable to resolve property type: " + className, e);
-                    }
-                }
-                throw new IllegalArgumentException("Unsupported method descriptor: " + descriptor);
+    private static final class LambdaCacheKey {
+
+        private final String implClass;
+        private final String implMethodName;
+        private final String implMethodSignature;
+        private final String instantiatedMethodType;
+
+        private LambdaCacheKey(String implClass, String implMethodName, String implMethodSignature,
+                               String instantiatedMethodType) {
+            this.implClass = implClass;
+            this.implMethodName = implMethodName;
+            this.implMethodSignature = implMethodSignature;
+            this.instantiatedMethodType = instantiatedMethodType;
+        }
+
+        static LambdaCacheKey from(SerializedLambda lambda) {
+            return new LambdaCacheKey(
+                lambda.getImplClass(),
+                lambda.getImplMethodName(),
+                lambda.getImplMethodSignature(),
+                lambda.getInstantiatedMethodType()
+            );
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            LambdaCacheKey that = (LambdaCacheKey) o;
+            return Objects.equals(implClass, that.implClass)
+                && Objects.equals(implMethodName, that.implMethodName)
+                && Objects.equals(implMethodSignature, that.implMethodSignature)
+                && Objects.equals(instantiatedMethodType, that.instantiatedMethodType);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(implClass, implMethodName, implMethodSignature, instantiatedMethodType);
         }
     }
 }

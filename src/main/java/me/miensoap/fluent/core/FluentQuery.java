@@ -142,7 +142,8 @@ public class FluentQuery<T> {
     }
 
     public boolean exists() {
-        return executor.exists(currentSpec());
+        Specification<T> base = spec;
+        return executor.count(base) > 0;
     }
 
     protected void addCondition(Specification<T> newSpec, boolean isOr) {

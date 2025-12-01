@@ -280,34 +280,4 @@ public class FieldStep<T> {
         }
         return field + " (" + boxed(propertyType).getTypeName() + ")";
     }
-
-    @Deprecated
-    public FluentQuery<T> eq(Object value) {
-        return equalTo(value);
-    }
-
-    @Deprecated
-    public FluentQuery<T> ne(Object value) {
-        return notEqualTo(value);
-    }
-
-    @Deprecated
-    public FluentQuery<T> gt(Number value) {
-        return greaterThan(value);
-    }
-
-    @Deprecated
-    public FluentQuery<T> ge(Number value) {
-        return greaterThanOrEqualTo(value);
-    }
-
-    @Deprecated
-    public FluentQuery<T> lt(Number value) {
-        return lessThan(value);
-    }
-
-    @Deprecated
-    public FluentQuery<T> le(Number value) {
-        return lessThanOrEqualTo(value);
-    }
 }
