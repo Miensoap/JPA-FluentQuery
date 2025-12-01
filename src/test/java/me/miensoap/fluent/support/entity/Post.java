@@ -1,4 +1,4 @@
-package me.miensoap.fluent.entity;
+package me.miensoap.fluent.support.entity;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

@@ -1,4 +1,6 @@
-package me.miensoap.fluent;
+package me.miensoap.fluent.tests.integration.dsl;
+
+import me.miensoap.fluent.support.AbstractFluentQueryIntegrationTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -8,7 +10,7 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import me.miensoap.fluent.entity.Member;
+import me.miensoap.fluent.support.entity.Member;
 
 class FluentQueryCollectionOperationsTest extends AbstractFluentQueryIntegrationTest {
 

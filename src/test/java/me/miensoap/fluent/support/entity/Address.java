@@ -1,4 +1,4 @@
-package me.miensoap.fluent.entity;
+package me.miensoap.fluent.support.entity;
 
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;

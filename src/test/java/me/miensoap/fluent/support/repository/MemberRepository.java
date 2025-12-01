@@ -1,11 +1,11 @@
-package me.miensoap.fluent.repository;
+package me.miensoap.fluent.support.repository;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 import me.miensoap.fluent.FluentRepository;
-import me.miensoap.fluent.entity.Member;
+import me.miensoap.fluent.support.entity.Member;
 
 public interface MemberRepository extends
     FluentRepository<Member, Long> {

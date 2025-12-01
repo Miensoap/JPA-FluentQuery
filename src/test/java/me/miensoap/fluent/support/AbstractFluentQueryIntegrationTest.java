@@ -1,15 +1,15 @@
-package me.miensoap.fluent;
+package me.miensoap.fluent.support;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import me.miensoap.fluent.core.FluentQuery;
-import me.miensoap.fluent.entity.Address;
-import me.miensoap.fluent.entity.Member;
-import me.miensoap.fluent.entity.MembershipType;
-import me.miensoap.fluent.entity.Team;
-import me.miensoap.fluent.repository.MemberRepository;
+import me.miensoap.fluent.support.entity.Address;
+import me.miensoap.fluent.support.entity.Member;
+import me.miensoap.fluent.support.entity.MembershipType;
+import me.miensoap.fluent.support.entity.Team;
+import me.miensoap.fluent.support.repository.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,7 +22,7 @@ import jakarta.persistence.PersistenceContext;
     "spring.jpa.properties.hibernate.session_factory.statement_inspector=me.miensoap.fluent.support.CapturingStatementInspector"
 })
 @Transactional
-abstract class AbstractFluentQueryIntegrationTest {
+public abstract class AbstractFluentQueryIntegrationTest {
 
     @Autowired
     protected MemberRepository memberRepository;

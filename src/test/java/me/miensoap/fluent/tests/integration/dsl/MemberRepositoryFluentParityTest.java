@@ -1,4 +1,6 @@
-package me.miensoap.fluent;
+package me.miensoap.fluent.tests.integration.dsl;
+
+import me.miensoap.fluent.support.AbstractFluentQueryIntegrationTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -8,7 +10,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import me.miensoap.fluent.entity.Member;
+import me.miensoap.fluent.support.entity.Member;
 
 /**
  * Ensures that derived Spring Data queries keep parity with the fluent DSL.

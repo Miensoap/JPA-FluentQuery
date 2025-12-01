@@ -1,4 +1,4 @@
-package me.miensoap.fluent.entity;
+package me.miensoap.fluent.support.entity;
 
 public enum MembershipType {
     BASIC,

@@ -1,4 +1,6 @@
-package me.miensoap.fluent;
+package me.miensoap.fluent.tests.integration.dsl;
+
+import me.miensoap.fluent.support.AbstractFluentQueryIntegrationTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -9,8 +11,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.jpa.domain.Specification;
 
-import me.miensoap.fluent.entity.Member;
-import me.miensoap.fluent.entity.MembershipType;
+import me.miensoap.fluent.support.entity.Member;
+import me.miensoap.fluent.support.entity.MembershipType;
 
 class FluentQueryLogicalCombinationTest extends
     AbstractFluentQueryIntegrationTest {

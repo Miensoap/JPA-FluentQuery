@@ -1,4 +1,6 @@
-package me.miensoap.fluent;
+package me.miensoap.fluent.tests.integration.dsl;
+
+import me.miensoap.fluent.support.AbstractFluentQueryIntegrationTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -13,11 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 
-import me.miensoap.fluent.entity.Member;
-import me.miensoap.fluent.entity.MemberLikePost;
-import me.miensoap.fluent.entity.MembershipType;
-import me.miensoap.fluent.entity.Post;
-import me.miensoap.fluent.repository.PostRepository;
+import me.miensoap.fluent.support.entity.Member;
+import me.miensoap.fluent.support.entity.MemberLikePost;
+import me.miensoap.fluent.support.entity.MembershipType;
+import me.miensoap.fluent.support.entity.Post;
+import me.miensoap.fluent.support.repository.PostRepository;
 
 /**
  * Member ───< Post ───< MemberLikePost 와 MemberLikePost >─── Member (liker) 관계를 그대로 사용한다.

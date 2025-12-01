@@ -1,7 +1,7 @@
-package me.miensoap.fluent.repository;
+package me.miensoap.fluent.support.repository;
 
 import me.miensoap.fluent.FluentRepository;
-import me.miensoap.fluent.entity.Post;
+import me.miensoap.fluent.support.entity.Post;
 
 public interface PostRepository extends FluentRepository<Post, Long> {
 }

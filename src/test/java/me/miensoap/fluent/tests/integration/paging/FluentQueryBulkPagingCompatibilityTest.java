@@ -1,4 +1,6 @@
-package me.miensoap.fluent;
+package me.miensoap.fluent.tests.integration.paging;
+
+import me.miensoap.fluent.support.AbstractFluentQueryIntegrationTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -15,9 +17,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 
-import me.miensoap.fluent.entity.Address;
-import me.miensoap.fluent.entity.Member;
-import me.miensoap.fluent.entity.MembershipType;
+import me.miensoap.fluent.support.entity.Address;
+import me.miensoap.fluent.support.entity.Member;
+import me.miensoap.fluent.support.entity.MembershipType;
 
 /**
  * Verifies that fetch(Pageable) integrates seamlessly with Spring Data Page APIs.
