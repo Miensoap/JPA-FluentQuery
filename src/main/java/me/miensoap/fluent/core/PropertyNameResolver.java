@@ -46,7 +46,11 @@ final class PropertyNameResolver {
             Method writeReplace = lambda.getClass().getDeclaredMethod("writeReplace");
             writeReplace.setAccessible(true);
             return (SerializedLambda) writeReplace.invoke(lambda);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+        } catch (NoSuchMethodException e) {
+            throw new IllegalArgumentException("Unable to extract property information. " +
+                "If using Kotlin, ensure the lambda is a method reference (e.g., Member::name). " +
+                "Kotlin function literals are not supported.", e);
+        } catch (IllegalAccessException | InvocationTargetException e) {
             throw new IllegalArgumentException("Unable to extract property information", e);
         }
     }

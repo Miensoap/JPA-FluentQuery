@@ -88,7 +88,11 @@ final class PropertyPathRecorder {
                 throw fail("Property chaining does not support interface return types: " + type.getName());
             }
             if (Modifier.isFinal(type.getModifiers())) {
-                throw fail("Property chaining requires non-final types but got: " + type.getName());
+                String message = "Property chaining requires non-final types but got: " + type.getName();
+                if (isKotlinClass(type)) {
+                    message += ". For Kotlin classes, use the 'open' modifier or use single property references (e.g., Member::name instead of Member::team.name).";
+                }
+                throw fail(message);
             }
             if (!hasUsableConstructor(type)) {
                 throw fail("Property chaining requires a non-private no-arg constructor for " + type.getName());
@@ -183,6 +187,16 @@ final class PropertyPathRecorder {
             }
             String implType = lambda.getImplClass() == null ? "unknown" : lambda.getImplClass().replace('/', '.');
             return implType + "#" + lambda.getImplMethodName();
+        }
+
+        private boolean isKotlinClass(Class<?> type) {
+            try {
+                // Kotlin classes have the kotlin.Metadata annotation
+                Class<?> metadataAnnotation = Class.forName("kotlin.Metadata");
+                return type.getAnnotation(metadataAnnotation) != null;
+            } catch (ClassNotFoundException e) {
+                return false;
+            }
         }
     }
 }
