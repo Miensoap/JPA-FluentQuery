@@ -192,7 +192,9 @@ final class PropertyPathRecorder {
         private boolean isKotlinClass(Class<?> type) {
             try {
                 // Kotlin classes have the kotlin.Metadata annotation
-                Class<?> metadataAnnotation = Class.forName("kotlin.Metadata");
+                @SuppressWarnings("unchecked")
+                Class<? extends java.lang.annotation.Annotation> metadataAnnotation =
+                    (Class<? extends java.lang.annotation.Annotation>) Class.forName("kotlin.Metadata");
                 return type.getAnnotation(metadataAnnotation) != null;
             } catch (ClassNotFoundException e) {
                 return false;

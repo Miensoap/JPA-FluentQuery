@@ -160,6 +160,10 @@ public class FluentQuery<T> {
         return executor.findOne(currentSpec());
     }
 
+    public long count() {
+        return executor.count(currentSpec());
+    }
+
     public boolean exists() {
         Specification<T> base = spec;
         return executor.count(base) > 0;
