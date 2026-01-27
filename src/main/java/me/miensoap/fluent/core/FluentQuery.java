@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,52 +28,62 @@ public class FluentQuery<T> {
     private Specification<T> spec;
     private boolean distinct;
 
-    public FluentQuery(JpaSpecificationExecutor<T> executor) {
+    public FluentQuery(@NotNull JpaSpecificationExecutor<T> executor) {
         this.executor = executor;
     }
 
-    public FieldStep<T> where(String field) {
+    @NotNull
+    public FieldStep<T> where(@NotNull String field) {
         return new FieldStep<>(this, field, false);
     }
 
-    public <R> FieldStep<T> where(Property<T, R> property) {
+    @NotNull
+    public <R> FieldStep<T> where(@NotNull Property<T, R> property) {
         String field = PropertyNameResolver.resolve(property);
         return new FieldStep<>(this, field, false, PropertyNameResolver.resolveType(property));
     }
 
-    public FluentQuery<T> where(Specification<T> specification) {
+    @NotNull
+    public FluentQuery<T> where(@Nullable Specification<T> specification) {
         this.spec = specification == null ? null : Specification.where(specification);
         return this;
     }
 
-    public FieldStep<T> and(String field) {
+    @NotNull
+    public FieldStep<T> and(@NotNull String field) {
         return new FieldStep<>(this, field, false);
     }
 
-    public <R> FieldStep<T> and(Property<T, R> property) {
+    @NotNull
+    public <R> FieldStep<T> and(@NotNull Property<T, R> property) {
         String field = PropertyNameResolver.resolve(property);
         return new FieldStep<>(this, field, false, PropertyNameResolver.resolveType(property));
     }
 
-    public FluentQuery<T> and(Specification<T> specification) {
+    @NotNull
+    public FluentQuery<T> and(@Nullable Specification<T> specification) {
         addCondition(specification, false);
         return this;
     }
 
-    public FieldStep<T> or(String field) {
+    @NotNull
+    public FieldStep<T> or(@NotNull String field) {
         return new FieldStep<>(this, field, true);
     }
 
-    public <R> FieldStep<T> or(Property<T, R> property) {
+    @NotNull
+    public <R> FieldStep<T> or(@NotNull Property<T, R> property) {
         String field = PropertyNameResolver.resolve(property);
         return new FieldStep<>(this, field, true, PropertyNameResolver.resolveType(property));
     }
 
-    public FluentQuery<T> or(Specification<T> specification) {
+    @NotNull
+    public FluentQuery<T> or(@Nullable Specification<T> specification) {
         addCondition(specification, true);
         return this;
     }
 
+    @NotNull
     public FluentQuery<T> not() {
         if (spec != null) {
             spec = Specification.not(spec);
@@ -79,36 +91,44 @@ public class FluentQuery<T> {
         return this;
     }
 
+    @NotNull
     public FluentQuery<T> distinct() {
         this.distinct = true;
         return this;
     }
 
-    public FluentQuery<T> fetchJoin(String path) {
+    @NotNull
+    public FluentQuery<T> fetchJoin(@NotNull String path) {
         return fetchJoin(path, JoinType.LEFT);
     }
 
-    public FluentQuery<T> fetchJoin(String path, JoinType joinType) {
+    @NotNull
+    public FluentQuery<T> fetchJoin(@NotNull String path, @NotNull JoinType joinType) {
         return registerFetchJoin(path, joinType);
     }
 
-    public <R> FluentQuery<T> fetchJoin(Property<T, R> property) {
+    @NotNull
+    public <R> FluentQuery<T> fetchJoin(@NotNull Property<T, R> property) {
         return fetchJoin(PropertyNameResolver.resolve(property));
     }
 
-    public <R> FluentQuery<T> fetchJoin(Property<T, R> property, JoinType joinType) {
+    @NotNull
+    public <R> FluentQuery<T> fetchJoin(@NotNull Property<T, R> property, @NotNull JoinType joinType) {
         String path = PropertyNameResolver.resolve(property);
         return registerFetchJoin(path, joinType);
     }
 
-    public OrderStep<T> orderBy(String field) {
+    @NotNull
+    public OrderStep<T> orderBy(@NotNull String field) {
         return new OrderStep<>(this, field);
     }
 
-    public <R> OrderStep<T> orderBy(Property<T, R> property) {
+    @NotNull
+    public <R> OrderStep<T> orderBy(@NotNull Property<T, R> property) {
         return new OrderStep<>(this, PropertyNameResolver.resolve(property));
     }
 
+    @NotNull
     public List<T> fetch() {
         Sort sort = buildSort();
         if (sort.isUnsorted()) {
@@ -117,7 +137,8 @@ public class FluentQuery<T> {
         return executor.findAll(currentSpec(), sort);
     }
 
-    public List<T> fetch(Sort sort) {
+    @NotNull
+    public List<T> fetch(@Nullable Sort sort) {
         Sort combined = sort == null ? buildSort() : buildSort().and(sort);
         if (combined.isUnsorted()) {
             return executor.findAll(currentSpec());
@@ -125,7 +146,8 @@ public class FluentQuery<T> {
         return executor.findAll(currentSpec(), combined);
     }
 
-    public Page<T> fetch(Pageable pageable) {
+    @NotNull
+    public Page<T> fetch(@NotNull Pageable pageable) {
         Sort sort = buildSort();
         if (!sort.isUnsorted()) {
             pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort().and(sort));
@@ -133,12 +155,9 @@ public class FluentQuery<T> {
         return executor.findAll(currentSpec(), pageable);
     }
 
+    @NotNull
     public Optional<T> fetchOne() {
         return executor.findOne(currentSpec());
-    }
-
-    public long count() {
-        return executor.count(currentSpec());
     }
 
     public boolean exists() {
@@ -173,7 +192,7 @@ public class FluentQuery<T> {
         };
     }
 
-    void addOrder(Sort.Order order) {
+    void addOrder(@NotNull Sort.Order order) {
         this.orderings.add(order);
     }
 
